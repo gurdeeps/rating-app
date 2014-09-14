@@ -39,6 +39,10 @@ public class UserDAO {
                 String image = trim(rs.getString("imageId"));
                 String managerId = trim(rs.getString("managerId"));
 
+                if(image != null) {
+                    image = transformUrl(image);
+                }
+
 
                 User user = new User();
                 user.setId(userId);
@@ -135,4 +139,15 @@ public class UserDAO {
         return input;
     }
 
+    String transformUrl (String url) {
+        int startIndex = url.indexOf("photo/");
+        if(startIndex != -1) {
+            startIndex = startIndex + 6;
+            int endIndex = url.lastIndexOf("/");
+            String imageId = url.substring(startIndex, endIndex);
+            String newUrl = "http://localhost/" + imageId + ".jpeg";
+            return newUrl;
+        }
+        return url;
+    }
 }
