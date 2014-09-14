@@ -1,0 +1,19 @@
+package main.java.com.rateme.dao;
+
+import java.util.List;
+
+
+public interface UserDAO {
+    
+    
+    GUSUser getUser(String gusId) throws Exception;
+    
+    GUSUser getRoot() throws Exception;
+    
+    List<GUSUser> findDirectReports(String gusId) throws Exception;
+    
+    int getTotalNumberOfUsers() throws Exception;
+    
+    void loadUserDataToDB(List<GUSUser> users) throws Exception;
+    
+}

@@ -1,0 +1,186 @@
+package main.java.com.rateme.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+
+public class RatingDaoImpl implements RatingDao {
+    
+    Statement statement = null;
+    ResultSet resultSet = null;
+    Connection connect = null;
+    PreparedStatement preStatement = null;
+    
+    
+    public int getUserRatingByRatingType(String userId, int rate) throws Exception {
+        try {
+            int rating = -1;
+            connect = DBConnection.createConnection();
+            String sql = "SELECT rating from dc_rating.rating WHERE userId='" + userId
+                    + "' and rating='" + rate + "'";
+            preStatement = connect.prepareStatement(sql);
+            ResultSet rs = preStatement.executeQuery();
+            while (rs.next()) {
+                rating = rs.getInt(1);
+            }
+            return rating;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+        
+    }
+    
+    public void createRating(String userId, int rating, String raterId) throws Exception {
+        
+        if (userId == null || raterId == null) {
+            // System.out.println("User id or rater id cannot be null");
+            throw new Exception("User id or rater id cannot be null");
+            
+        }
+        try {
+            java.util.Date date = new java.util.Date();
+            connect = DBConnection.createConnection();
+            String sql = "INSERT INTO dc_rating.rating(userId,rating,ratedBy,ratingDate) VALUES("
+                    + "'"
+                    + userId
+                    + "'"
+                    + ","
+                    + "'"
+                    + rating
+                    + "'"
+                    + ","
+                    + "'"
+                    + raterId
+                    + "'" + "," + "'" + new Timestamp(date.getTime()) + "')";
+            
+
+            preStatement = connect.prepareStatement(sql);
+            preStatement.executeUpdate();
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+        
+    }
+    
+    public void updateRating(String userId, int rating, String raterId) throws Exception {
+        
+        if (userId == null || raterId == null) {
+            throw new Exception("User id or rater id cannot be null");
+        }
+        try {
+            java.util.Date date = new java.util.Date();
+            connect = DBConnection.createConnection();
+            String sql = "UPDATE dc_rating.rating SET rating=" + "'" + rating + "'" + ","
+                    + " ratingDate=" + "'" + new Timestamp(date.getTime()) + "'"
+                    + " WHERE userId=" + "'" + userId + "'" + " AND ratedBy=" + "'"
+                    + raterId + "'";
+            System.out.println(sql);
+            
+
+            preStatement = connect.prepareStatement(sql);
+            preStatement.executeUpdate();
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+        
+    }
+    
+    public boolean isEligibleForRatingUpdate(String userId, String raterId)
+            throws Exception {
+        // get the rating date first
+        connect = DBConnection.createConnection();
+        java.util.Date date = new java.util.Date();
+        Timestamp currentRatingDate = new Timestamp(date.getTime());
+        Timestamp existingRatingDate = null;
+        try {
+            String sql = "SELECT ratingDate from dc_rating.rating WHERE userId='"
+                    + userId + "' and ratedBy='" + raterId + "'";
+            preStatement = connect.prepareStatement(sql);
+            ResultSet rs = preStatement.executeQuery();
+            
+
+            while (rs.next()) {
+                existingRatingDate = rs.getTimestamp(1);
+            }
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+        int difference = 0;
+        if (existingRatingDate != null)
+            difference = getDaysBetween(existingRatingDate, currentRatingDate);
+        
+        System.out.println("Diff in days is " + difference);
+        if (difference >= 7)
+            return true;
+        else
+            return false;
+    }
+    
+    private int getDaysBetween(Timestamp start, Timestamp end) {
+        
+        boolean negative = false;
+        if (end.before(start)) {
+            negative = true;
+            Timestamp temp = start;
+            start = end;
+            end = temp;
+        }
+        
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(start);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        
+        GregorianCalendar calEnd = new GregorianCalendar();
+        calEnd.setTime(end);
+        calEnd.set(Calendar.HOUR_OF_DAY, 0);
+        calEnd.set(Calendar.MINUTE, 0);
+        calEnd.set(Calendar.SECOND, 0);
+        calEnd.set(Calendar.MILLISECOND, 0);
+        
+
+        if (cal.get(Calendar.YEAR) == calEnd.get(Calendar.YEAR)) {
+            if (negative)
+                return (calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR))
+                        * -1;
+            return calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR);
+        }
+        
+        int days = 0;
+        while (calEnd.after(cal)) {
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+            days++;
+        }
+        if (negative)
+            return days * -1;
+        return days;
+    }
+    
+}

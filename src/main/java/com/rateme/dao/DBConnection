@@ -1,0 +1,24 @@
+package main.java.com.rateme.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
+public class DBConnection {
+    
+    private static Connection connection = null;
+    
+    public static Connection createConnection() throws SQLException,
+            ClassNotFoundException {
+        
+        Class.forName("com.mysql.jdbc.Driver");
+        // setup the connection with the DB.
+        connection = DriverManager.getConnection("jdbc:mysql://localhost/dc_rating?"
+                + "user=mysql&password=mysqltest");
+        return connection;
+        
+    }
+    
+
+}

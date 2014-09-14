@@ -1,0 +1,14 @@
+package main.java.com.rateme.dao;
+
+
+public interface RatingDao {
+    
+    public int getUserRatingByRatingType(String userId, int rate) throws Exception;
+    
+    public void createRating(String userId, int rating, String raterId) throws Exception;
+    
+    public void updateRating(String userId, int rating, String raterId) throws Exception;
+    
+    public boolean isEligibleForRatingUpdate(String userId, String raterId)
+            throws Exception;
+}
