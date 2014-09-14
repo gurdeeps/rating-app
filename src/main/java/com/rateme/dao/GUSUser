@@ -1,0 +1,95 @@
+package main.java.com.rateme.dao;
+
+
+public class GUSUser {
+    
+    
+    private String id;
+    private String managerId;
+    private String name;
+    
+    private String email;
+    
+    private String imageUrl;
+    
+    private String rating;
+    
+    
+    // private String title;
+    // private String businessUnit;
+    // private String department;
+    
+
+    String getId() {
+        return id;
+    }
+    
+    void setId(String id) {
+        this.id = id;
+    }
+    
+    String getManagerId() {
+        return managerId;
+    }
+    
+    void setManagerId(String managerId) {
+        this.managerId = managerId;
+    }
+    
+    String getName() {
+        return name;
+    }
+    
+    void setName(String name) {
+        this.name = name;
+    }
+    
+    String getEmail() {
+        return email;
+    }
+    
+    void setEmail(String email) {
+        this.email = email;
+    }
+    
+    String getImageUrl() {
+        return imageUrl;
+    }
+    
+    void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    
+    String getRating() {
+        return imageUrl;
+    }
+    
+    void setRating(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    
+    // String getTitle() {
+    // return title;
+    // }
+    //
+    // void setTitle(String title) {
+    // this.title = title;
+    // }
+    //
+    // String getBusinessUnit() {
+    // return businessUnit;
+    // }
+    //
+    // void setBusinessUnit(String businessUnit) {
+    // this.businessUnit = businessUnit;
+    // }
+    //
+    // String getDepartment() {
+    // return department;
+    // }
+    //
+    // void setDepartment(String department) {
+    // this.department = department;
+    // }
+    
+}
