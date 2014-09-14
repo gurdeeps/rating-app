@@ -1,0 +1,215 @@
+package main.java.com.rateme.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class UserDAOImpl implements UserDAO {
+    
+    Statement statement = null;
+    ResultSet resultSet = null;
+    Connection connect = null;
+    PreparedStatement preStatement = null;
+    
+    public GUSUser getUser(String gusId) throws Exception {
+        
+        GUSUser user = new GUSUser();
+        try {
+            connect = DBConnection.createConnection();
+            String sql = "SELECT userId, name, email, imageId, managerId from dc_rating.user WHERE userId='"
+                    + gusId + "'";
+            preStatement = connect.prepareStatement(sql);
+            ResultSet rs = preStatement.executeQuery();
+            
+            while (rs.next()) {
+                user.setId(rs.getString("userId"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setImageUrl(rs.getString("imageId"));
+                user.setManagerId(rs.getString("managerId"));
+                // user.setTitle(rs.getString("title"));
+                // user.setBusinessUnit(rs.getString("businessUnit"));
+                // user.setDepartment(rs.getString("department"));
+            }
+            return user;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+    }
+    
+    public GUSUser getRoot() throws Exception {
+        
+        GUSUser user = new GUSUser();
+        try {
+            connect = DBConnection.createConnection();
+            String sql = "SELECT userId, name, email, imageId, managerId from dc_rating.user WHERE userId='0050000000000SDAAY'";
+            preStatement = connect.prepareStatement(sql);
+            ResultSet rs = preStatement.executeQuery();
+            
+            while (rs.next()) {
+                user.setId(rs.getString("userId"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setImageUrl(rs.getString("imageId"));
+            }
+            return user;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+        
+    }
+    
+    public List<GUSUser> findDirectReports(String gusId) throws Exception {
+        
+        List<GUSUser> users = new ArrayList<GUSUser>();
+        try {
+            connect = DBConnection.createConnection();
+            String sql = "SELECT userId, name, email, imageId, managerId from dc_rating.user WHERE ManagerId='"
+                    + gusId + "'";
+            preStatement = connect.prepareStatement(sql);
+            ResultSet rs = preStatement.executeQuery();
+            int ctr = 0;
+            while (rs.next()) {
+                GUSUser user = new GUSUser();
+                user.setId(rs.getString("userId"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setImageUrl(rs.getString("imageId"));
+                user.setManagerId(rs.getString("managerId"));
+                // user.setBusinessUnit(rs.getString("businessUnit"));
+                // user.setDepartment(rs.getString("department"));
+                users.add(ctr, user);
+                ctr++;
+            }
+            return users;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+    }
+    
+    public int getTotalNumberOfUsers() throws Exception {
+        GUSUser user = new GUSUser();
+        try {
+            connect = DBConnection.createConnection();
+            String sql = "SELECT count(1) from dc_rating.user";
+            preStatement = connect.prepareStatement(sql);
+            ResultSet rs = preStatement.executeQuery();
+            int totalCount = 0;
+            while (rs.next()) {
+                totalCount = rs.getInt(1);
+            }
+            return totalCount;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            
+            connect.close();
+        }
+    }
+    
+    
+    public void loadUserDataToDB(List<GUSUser> users) throws Exception {
+        
+        try {
+            connect = DBConnection.createConnection();
+            for (GUSUser user : users) {
+                String userName = null;
+                String email = null;
+                String title = null;
+                String businessUnit = null;
+                String department = null;
+                
+                if (user.getName().contains("'")) {
+                    userName = user.getName().replace("'", "''");
+                }
+                userName = "'" + userName + "'";
+                
+                email = user.getEmail();
+                if (email != null) {
+                    if (email.contains("'")) {
+                        email = "'" + email.replace("'", "''") + "'";
+                    }
+                    else
+                        email = "'" + email + "'";
+                }
+                else
+                    email = null;
+                
+                // title = user.getTitle();
+                // if (title != null) {
+                // if (title.contains("'")) {
+                // title = "'" + title.replace("'", "''") + "'";
+                // }
+                // else
+                // title = "'" + title + "'";
+                // }
+                // else
+                // title = null;
+                //
+                // businessUnit = user.getBusinessUnit();
+                // if (businessUnit != null) {
+                // if (businessUnit.contains("'")) {
+                // businessUnit = "'" + businessUnit.replace("'", "''") + "'";
+                // }
+                // else
+                // businessUnit = "'" + businessUnit + "'";
+                // }
+                // else
+                // businessUnit = null;
+                //
+                //
+                // department = user.getDepartment();
+                // if (department != null) {
+                // if (department.contains("'")) {
+                // department = "'" + department.replace("'", "''") + "'";
+                // }
+                // else
+                // department = "'" + department + "'";
+                // }
+                // else
+                // department = null;
+                
+
+                String sql = "INSERT into dc_rating.user(userId, name, email,imageId, managerId) "
+                        + "VALUES("
+                        + "'"
+                        + user.getId()
+                        + "'"
+                        + ","
+                        + userName
+                        + ","
+                        + email + "," + "'" + user.getImageUrl() + "'" + ")";
+                preStatement = connect.prepareStatement(sql);
+                // statement = connect.createStatement();
+                preStatement.executeUpdate();
+            }
+        }
+        catch (Exception e) {
+            throw e;
+        }
+        finally {
+            connect.close();
+        }
+    }
+}
