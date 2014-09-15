@@ -6,6 +6,8 @@ import com.rateme.beans.MyRatingRequestBean;
 import com.rateme.beans.MyRatingResponseBean;
 import com.rateme.beans.NextRequestBean;
 import com.rateme.beans.NextResponseBean;
+import com.rateme.beans.SubmitRatingRequestBean;
+import com.rateme.beans.SubmitRatingResponseBean;
 import com.rateme.beans.UserRatingBean;
 import com.rateme.dao.UserDAO;
 import com.rateme.domain.UserRating;
@@ -93,6 +95,22 @@ public class RatingController {
         UserRating rating = userDAO.getUserRating(myRatingRequest.getUserId());
         responseBean.setLikes(rating.getLikes());
         responseBean.setDisLikes(rating.getDisLikes());
+        return responseBean;
+    }
+
+    @ResponseBody
+    @RequestMapping("/submitRating")
+    public SubmitRatingResponseBean submitRating(@RequestBody SubmitRatingRequestBean submitRatingRequest) {
+        SubmitRatingResponseBean responseBean = new SubmitRatingResponseBean();
+        UserRatingBean userRating = submitRatingRequest.getUserRating();
+        if(userRating != null) {
+            if(userRating.isRating()) {
+                userDAO.addLike(userRating.getUserId());
+            } else {
+                userDAO.addDisLike(userRating.getUserId());
+            }
+            responseBean.setSuccess(true);
+        }
         return responseBean;
     }
 }
