@@ -5,6 +5,7 @@ import com.rateme.domain.UserRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -24,6 +25,7 @@ public class UserDAO {
     private HashMap<String, User> emailUserMap = new HashMap<String, User>();
     private List<User> users = new ArrayList<User>();
 
+    @PostConstruct
     public void init() {
         Connection con = null;
         Statement statement = null;

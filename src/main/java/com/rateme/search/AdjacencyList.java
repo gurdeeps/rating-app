@@ -27,8 +27,8 @@ public class AdjacencyList {
 
 
     public void addEdge(int v, int w) {
-        if (v < 0 || v >= V) throw new IndexOutOfBoundsException();
-        if (w < 0 || w >= V) throw new IndexOutOfBoundsException();
+        if (v < 0 || v >= V) throw new IndexOutOfBoundsException("v=" + v + " V=" + V);
+        if (w < 0 || w >= V) throw new IndexOutOfBoundsException("w=" + w+ " V=" + V);
         E++;
         if(!adj[v].contains(w)) {
             adj[v].add(w);

@@ -19,6 +19,7 @@ public class SearchService {
     private UserDAO userDAO;
     private boolean initialized;
 
+    @PostConstruct
     void init() {
         int numUsers = userDAO.getCount();
         symbolTable = new SymbolTable(numUsers);
