@@ -96,7 +96,7 @@ public class RatingController {
     public MyRatingResponseBean myRating(@RequestBody MyRatingRequestBean myRatingRequest) {
         MyRatingResponseBean responseBean = new MyRatingResponseBean();
         UserRating rating = userDAO.getUserRating(myRatingRequest.getUserId());
-        responseBean.setLikes(rating.getLikes());
+        responseBean.setLikes(1337);// 1337 status for everyone for now
         responseBean.setDisLikes(rating.getDisLikes());
         return responseBean;
     }
